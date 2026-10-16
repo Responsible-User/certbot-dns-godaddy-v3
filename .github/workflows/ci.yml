@@ -111,6 +111,9 @@ jobs:
     name: Build and push docker images
     needs: [environment, lint, test]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       -
         name: Checkout
