@@ -1,24 +1,28 @@
-[tool.poetry]
-name = "certbot-dns-godaddy"
-version = "2.8.0"
-description = "A certbot plugin that implements letsencrypt dns wildcard support for godaddy using lexicon"
-authors = ["Dustyn Gibson <miigotu@gmail.com>"]
+[project]
+name = "certbot-dns-godaddy-v3"
+version = "3.0.1"
+description = "A certbot plugin that implements letsencrypt dns wildcard support for godaddy using the GoDaddy Domains v3 API and Personal Access Tokens (rewrite of certbot-dns-godaddy by Dustyn Gibson)"
+authors = [{ name = "Responsible-User", email = "11071031+Responsible-User@users.noreply.github.com" }]
 license = "Apache-2.0"
+license-files = ["LICENSE.txt"]
 readme = "README.md"
-repository = "https://github.com/miigotu/certbot-dns-godaddy"
-
-packages = [{include = "certbot_dns_godaddy.py"}]
-
+requires-python = ">=3.10"
+dependencies = [
+    "certbot>=2.8.0",
+    "requests>=2.25.1",
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Plugins",
     "Intended Audience :: System Administrators",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Security",
     "Topic :: System :: Installation/Setup",
@@ -27,17 +31,27 @@ classifiers = [
     "Topic :: Utilities",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-certbot = ">=2.8.0"
-dns-lexicon = ">=3.14.0"
+[project.urls]
+repository = "https://github.com/Responsible-User/certbot-dns-godaddy-v3"
+"Original project (Dustyn Gibson)" = "https://github.com/miigotu/certbot-dns-godaddy"
 
-[tool.poetry.dev-dependencies]
-isort = "^5.8.0"
+[project.entry-points."certbot.plugins"]
+dns-godaddy-v3 = "certbot_dns_godaddy_v3:Authenticator"
+
+[dependency-groups]
+dev = [
+    "isort>=5.8.0",
+    "pytest>=8",
+    "requests-mock>=1.12",
+]
+
+[tool.poetry]
+packages = [{ include = "certbot_dns_godaddy_v3.py" }]
+include = [{ path = "tests", format = "sdist" }]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.plugins."certbot.plugins"]
-"dns-godaddy" = "certbot_dns_godaddy:Authenticator"

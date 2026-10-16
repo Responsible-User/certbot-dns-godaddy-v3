@@ -33,6 +33,32 @@ jobs:
       -
         name: Check shell scripts
         uses: ludeeus/action-shellcheck@master
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    needs: [lint]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+    steps:
+      -
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      -
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      -
+        name: Install package and test dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install . --group dev
+      -
+        name: Run tests
+        run: python -m pytest
   environment:
     name: Set up environment for docker and poetry
     needs: [lint]
@@ -62,11 +88,11 @@ jobs:
       uses: docker/metadata-action@v5
       with:
         images: |
-          ${{ github.repository }}
+          responsibleuser/${{ github.event.repository.name }}
           ghcr.io/${{ github.repository }}
         labels: |
-          org.opencontainers.image.source=https://github.com/miigotu/certbot-dns-godaddy
-          org.opencontainers.image.url=https://github.com/miigotu/certbot-dns-godaddy
+          org.opencontainers.image.source=https://github.com/Responsible-User/certbot-dns-godaddy-v3
+          org.opencontainers.image.url=https://github.com/Responsible-User/certbot-dns-godaddy-v3
           org.opencontainers.image.licenses=Apache-2.0
         tags: |
           type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
@@ -83,7 +109,7 @@ jobs:
           type=semver,pattern={{major}}.{{minor}},enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
   docker:
     name: Build and push docker images
-    needs: [environment, lint]
+    needs: [environment, lint, test]
     runs-on: ubuntu-latest
     steps:
       -
@@ -137,7 +163,7 @@ jobs:
           tags: ${{ needs.environment.outputs.docker_tags }}
   poetry:
     name: Build and publish wheels
-    needs: [environment, lint, docker]
+    needs: [environment, lint, test, docker]
     runs-on: ubuntu-latest
     steps:
       -

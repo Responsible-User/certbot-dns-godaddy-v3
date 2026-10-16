@@ -5,3 +5,8 @@ dist
 *.log*
 work
 .vscode
+.claude
+__pycache__
+.pytest_cache
+.mypy_cache
+.coverage

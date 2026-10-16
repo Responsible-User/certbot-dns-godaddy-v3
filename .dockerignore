@@ -1,0 +1,13 @@
+.git
+.github
+.venv
+.idea
+.vscode
+.pytest_cache
+.mypy_cache
+.coverage
+**/__pycache__
+dist
+work
+*.ini
+*.log*
